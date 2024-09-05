@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Esri Leaflet Map</title>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+  <!-- Esri Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder/dist/esri-leaflet-geocoder.css">
+
+  <!-- Leaflet JavaScript -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <!-- Esri Leaflet JavaScript -->
+  <script src="https://unpkg.com/esri-leaflet/dist/esri-leaflet.js"></script>
+
+  <!-- Esri OAuth2 JavaScript -->
+  <script src="https://unpkg.com/esri-leaflet-oauth/dist/esri-leaflet-oauth.js"></script>
+</head>
+<body>
+  <div id="map" style="height: 500px;"></div>
+
+  <script>
+    // Step 2: Set Up OAuth2 Authentication
+    var oauth2 = new L.esri.OAuth2({
+      clientId: '2DVBJDJUYZhWYkjh', // Replace with your Client ID
+      portal: 'https://www.arcgis.com',
+      expiration: 20160, // Optional: expiration in minutes (14 days)
+      popup: false // Set to true if you want to use a popup for authentication
+    });
+
+    oauth2.signIn().then(function() {
+      console.log('User signed in:', oauth2);
+
+      // Step 3: Initialize the Map
+      var map = L.map('map').setView([37.7749, -122.4194], 13); // Set initial view coordinates and zoom level
+
+      // Step 4: Add Basemap Layer
+      L.esri.basemapLayer('Topographic', {
+        token: oauth2.getToken()
+      }).addTo(map);
+
+      // Step 5: Add Additional Layers or Controls (Optional)
+      // Example: Adding a Feature Layer
+      var featureLayer = L.esri.featureLayer({
+        url: 'https://services.arcgis.com/V6ZHFr6zdgNZuVG0/ArcGIS/rest/services/San_Francisco_Street_Trees/FeatureServer/0',
+        token: oauth2.getToken()
+      }).addTo(map);
+
+    }).catch(function(error) {
+      console.error('Authentication error:', error);
+    });
+  </script>
+</body>
+</html>
